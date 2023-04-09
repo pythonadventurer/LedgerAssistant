@@ -33,4 +33,7 @@ Automatically calculates split amounts and ensures transactions is balanced befo
 - Install the requirements (``requirements.txt``)
 - run ``gui_mockup.py`` to get an idea of what the app will look like.
  
+## Screenshot
+
+[GUI mockup](interface_design/gui-mockup.jpg)
 
