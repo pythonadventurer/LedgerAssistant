@@ -18,10 +18,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 from tkinter import *
 from tkinter import ttk
 from tkintertable import TableCanvas, TableModel
+from config import *
 
 root = Tk()
 root.title('Ledger Assistant')
 fraMain = Frame(root)
+
+def AddRow(table):
+    table.addRow()
+
+
+
 
 # Menu
 mnuMainMenu = Menu(root)
@@ -73,12 +80,10 @@ btnPost.grid(row=2,column=2,sticky=(W,E),padx=5,pady=5)
 fraEnterSplits = Frame(fraMain,bd=2,relief="raised")
 
 ### lblAccount : anchor seems to make no difference
+varAccount = StringVar()
 lblAccount = Label(fraEnterSplits,text="Account",font=("Helvetica",12),anchor=E)
-cboAccount = ttk.Combobox(fraEnterSplits,font=("Helvetica",12))
-cboAccount['values'] = ["Liabilities:AAA Credit Card",
-                        "Expenses:Food:Groceries",
-                        "Expenses:Cleaning Supplies",
-                        "Expenses:Pet Expenses:Cat Food & Supplies"]
+cboAccount = ttk.Combobox(fraEnterSplits,textvariable=varAccount,font=("Helvetica",12))
+cboAccount['values'] = accounts
 
 lblSplitAmount = Label(fraEnterSplits,text="Amount",font=("Helvetica",12),anchor=E)
 txtSplitAmt = Entry(fraEnterSplits,font=("Helvetica",12))
@@ -90,11 +95,13 @@ varApplyTax = IntVar()
 chkApplyTax = ttk.Checkbutton(fraEnterSplits,text="Tax %",variable=varApplyTax,onvalue=1,offvalue=0)
 lblTaxPct = Label(fraEnterSplits,text="7.0",font=("Helvetica",10))
 
+varTotalAmount = StringVar()
 lblTotalAmount = Label(fraEnterSplits,text="Total Amt.",font=("Helvetica",12),anchor=E)
-txtTotalAmount = Entry(fraEnterSplits,font=("Helvetica",12))
+txtTotalAmount = Entry(fraEnterSplits,textvariable=varTotalAmount,font=("Helvetica",12))
 
+varMemo = StringVar()
 lblMemo = Label(fraEnterSplits,text="Memo",font=("Helvetica",12),anchor=E)
-txtMemo = Entry(fraEnterSplits,font=("Helvetica",12))
+txtMemo = Entry(fraEnterSplits,textvariable=varMemo,font=("Helvetica",12))
 
 ## Grid Split Entry Widgets
 lblAccount.grid(row=0,column=0,padx=5,pady=5,sticky=(E,W))
@@ -116,8 +123,16 @@ lblMemo.grid(row=4,column=0,padx=(80,5),pady=5,sticky=(E,W))
 txtMemo.grid(row=4,column= 1,columnspan=3,padx=5,pady=5,sticky=(E,W))
 
 ## Split Entry Button Row
+global mdlModel
+mdlModel = TableModel()
+mdlModel.addRow(Account='',Amount='',Memo='')
+
+def add_split():
+    # mdlModel.addRow(Account=varAccount,Amount=varTotalAmount,Memo=varMemo)
+    print(varAccount.get())
+
 fraButtonRow = Frame(fraEnterSplits)
-btnAdd = Button(fraButtonRow,text="Add",width=10)
+btnAdd = Button(fraButtonRow,text="Add",width=10,command=add_split)
 btnUpdate = Button(fraButtonRow,text="Update",width=10)
 btnDelete = Button(fraButtonRow,text="Delete",width=10)
 
@@ -129,14 +144,20 @@ fraButtonRow.grid(row=5,column=0,columnspan=4)
 
 # Split Details Frame
 fraSplitDetails = Frame(fraMain,bd=2,relief="raised")
-varTableStartData = {'1':{'Account':' ','Amount':' ','Memo': ' '}}
-tblSplitDetails = TableCanvas(fraSplitDetails,data=varTableStartData,rowheaderwidth=0)
+# varTableData = {1:{'Account':'',
+#                    'Amount':'',
+#                    'Memo':''}}
+
+
+# mdlModel.importDict(varTableData)
+tblSplitDetails = TableCanvas(fraSplitDetails,model=mdlModel,rowheaderwidth=0)
 tblSplitDetails.show()
 
 fraMain.grid(row=0,column=0,padx=5,pady=5)
 fraTransaction.grid(row=0,column=0,padx=5,pady=5,sticky=(E,W))
 fraEnterSplits.grid(row=1,column=0,padx=5,pady=5,sticky=(E,W))
 fraSplitDetails.grid(row=2,column=0,padx=5,pady=5)
+
 
 
 root.mainloop()
