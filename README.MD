@@ -4,16 +4,14 @@
 ## Introduction
 
 **LedgerAssistant** is a GUI for entering transactions into an [hledger-style](https://hledger.org) journal.
-Easily handles transactions with multiple splits to different accounts. Includes calcuation of sales tax.  
-A single transaction can have a combination of taxable and non-taxable splits.
-Automatically calculates split amounts and ensures transactions is balanced before posting.
+Easily handles transactions with multiple splits to different accounts. Includes calcuation of sales tax. A single transaction can have a combination of taxable and non-taxable splits. Automatically calculates split amounts and ensures transactions are balanced before posting.
 
 ## License
  GNU General Public License 3. See the LICENSE file for details.
                        
 ## Planned Features and Usage
 - Enter date, transaction description and amount at top.
-- Enter transaction splits in the **Enter Splits** secion
+- Enter transaction splits in the **Enter Splits** section
 - For each account distribution:
     - Select account from combo box
     - Enter amount to distribute
