@@ -35,5 +35,5 @@ Automatically calculates split amounts and ensures transactions is balanced befo
  
 ## Screenshot
 
-[GUI mockup](interface_design/gui-mockup.jpg)
+![GUI mockup](interface_design/gui-mockup.jpg)
 
