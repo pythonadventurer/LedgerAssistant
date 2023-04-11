@@ -144,14 +144,37 @@ fraButtonRow.grid(row=5,column=0,columnspan=4)
 
 # Split Details Frame
 fraSplitDetails = Frame(fraMain,bd=2,relief="raised")
-# varTableData = {1:{'Account':'',
-#                    'Amount':'',
-#                    'Memo':''}}
 
 
-# mdlModel.importDict(varTableData)
-tblSplitDetails = TableCanvas(fraSplitDetails,model=mdlModel,rowheaderwidth=0)
-tblSplitDetails.show()
+# Split Details Scrollbar
+scrSplitsScroll = Scrollbar(fraSplitDetails)
+scrSplitsScroll.pack(side=RIGHT,fill=Y)
+
+# Split Details Treeview Table
+tblSplits = ttk.Treeview(fraSplitDetails,yscrollcommand=scrSplitsScroll.set,selectmode="extended")
+tblSplits.pack()
+
+# Configure the scrollbar
+scrSplitsScroll.config(command=tblSplits.yview())
+
+
+# Define Columns
+tblSplits["columns"] = ("account","amount","memo")
+
+# Format Columns
+tblSplits.column("#0",width=0,stretch=NO)
+tblSplits.column("account",anchor=W,width=150)
+tblSplits.column("amount",anchor=W,width=75)
+tblSplits.column("memo",anchor=W,width=200)
+
+# Create Headings
+tblSplits.heading("#0",text="",anchor=W)
+tblSplits.heading("account",text="Account",anchor=W)
+tblSplits.heading("amount",text="Amount",anchor=W)
+tblSplits.heading("memo",text="Memo",anchor=W)
+
+
+
 
 fraMain.grid(row=0,column=0,padx=5,pady=5)
 fraTransaction.grid(row=0,column=0,padx=5,pady=5,sticky=(E,W))
