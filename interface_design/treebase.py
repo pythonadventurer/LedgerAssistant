@@ -198,10 +198,10 @@ my_menu = Menu(root)
 root.config(menu=my_menu)
 
 
-
-# Configure our menu
+# Configure menu
 option_menu = Menu(my_menu, tearoff=0)
 my_menu.add_cascade(label="Options", menu=option_menu)
+
 # Drop down menu
 option_menu.add_command(label="Primary Color", command=primary_color)
 option_menu.add_command(label="Secondary Color", command=secondary_color)
@@ -214,6 +214,7 @@ option_menu.add_command(label="Exit", command=root.quit)
 #Search Menu
 search_menu = Menu(my_menu, tearoff=0)
 my_menu.add_cascade(label="Search", menu=search_menu)
+
 # Drop down menu
 search_menu.add_command(label="Search", command=lookup_records)
 search_menu.add_separator()
