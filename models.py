@@ -120,6 +120,7 @@ class Journal:
                     memo = memo.replace(","," ")
                     memo = memo.replace(".","_")
                     memo = memo.replace("  "," ")
+                    memo = memo.replace(":"," ")
                     memo = memo.replace("\n"," ")
                     memo = memo.strip()
                     hledger_text += f" {memo}"
