@@ -15,6 +15,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
+import decimal
+decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
 
 class Transaction:
@@ -28,6 +30,9 @@ class Transaction:
         self.splits = []
 
     def add_split(self,memo,account,amount):
+        # Amounts are provided as numbers with two decimal places.
+        # Stored as integers in which the last two digits represent cents.
+        amount = int(amount * 100)
         split = TransactionSplit(memo, account, amount)
         self.splits.append(split)
 
@@ -35,7 +40,7 @@ class Transaction:
         bal = 0
         for split in self.splits:
             bal += split.amount
-        return bal
+        return bal/100
 
     def printout(self):
         print(self.date, self.description)
@@ -43,6 +48,27 @@ class Transaction:
             print(f"    {split.account} {split.amount} {split.memo}")
         print(f"Balance: {self.balance()}")
 
+    def hledger_format(self):
+        # return the transaction in hledger format
+        hledger_text = f"{self.date} {self.description}\n"
+        for split in self.splits:
+            amount = str("{:.2f}".format(decimal.Decimal(split.amount)/100))
+            num_spaces = (60-len(split.account)-len(amount))
+            spacing = num_spaces * " "
+            hledger_text += f"    {split.account}{spacing}{amount}"
+            if split.memo != "":
+                # sanitize memo field
+                memo = split.memo
+                memo = memo.replace(","," ")
+                memo = memo.replace(".","_")
+                memo = memo.replace("  "," ")
+                memo = memo.replace(":"," ")
+                memo = memo.replace("\n"," ")
+                memo = memo.strip()
+                hledger_text += f" ; {memo}"
+            hledger_text +="\n"
+        hledger_text +="\n"
+        return hledger_text
 
 class TransactionSplit:
     def __init__(self,memo,account,amount):

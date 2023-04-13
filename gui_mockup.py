@@ -123,14 +123,6 @@ lblMemo.grid(row=4,column=0,padx=(80,5),pady=5,sticky=(E,W))
 txtMemo.grid(row=4,column= 1,columnspan=3,padx=5,pady=5,sticky=(E,W))
 
 ## Split Entry Button Row
-global mdlModel
-mdlModel = TableModel()
-mdlModel.addRow(Account='',Amount='',Memo='')
-
-def add_split():
-    # mdlModel.addRow(Account=varAccount,Amount=varTotalAmount,Memo=varMemo)
-    print(varAccount.get())
-
 fraButtonRow = Frame(fraEnterSplits)
 btnAdd = Button(fraButtonRow,text="Add",width=10,command=add_split)
 btnUpdate = Button(fraButtonRow,text="Update",width=10)
@@ -157,7 +149,6 @@ tblSplits.pack()
 # Configure the scrollbar
 scrSplitsScroll.config(command=tblSplits.yview())
 
-
 # Define Columns
 tblSplits["columns"] = ("account","amount","memo")
 
@@ -172,9 +163,6 @@ tblSplits.heading("#0",text="",anchor=W)
 tblSplits.heading("account",text="Account",anchor=W)
 tblSplits.heading("amount",text="Amount",anchor=W)
 tblSplits.heading("memo",text="Memo",anchor=W)
-
-
-
 
 fraMain.grid(row=0,column=0,padx=5,pady=5)
 fraTransaction.grid(row=0,column=0,padx=5,pady=5,sticky=(E,W))

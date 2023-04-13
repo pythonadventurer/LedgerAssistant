@@ -16,21 +16,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
-import configparser
+from tkinter import *
+from tkinter import ttk
+from gui import *
 from models import *
-import decimal
-decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
 
-config = configparser.ConfigParser()
-config.read('config.ini')
+class LedgerAssistant:
 
-# Amounts are provided as numbers with two decimal places.
-# Stored as integers in which the last two digits represent cents.
+    def __init__(self,root):
+        root.title("LedgerAssistant")
+        mnuMain = MainMenu(root)
+        root.config(menu=mnuMain)
+        EnterTransaction = TransactionEntry(root)
 
-test_transaction = Transaction('2023-04-12','Amazon 112-0088785-1211437 ')
-test_transaction.add_split('','Liabilities:AAA Credit Card',-85.38)
-test_transaction.add_split('Travelon Small Backpack Peacock One Size', 'Expenses:Travel:Misc', 42.59)
-test_transaction.add_split('Beraliy Travel Backpack', 'Expenses:Travel:Misc', 42.79)
-print(test_transaction.hledger_format())
 
+
+root = Tk()
+LedgerAssistant(root)
+root.mainloop()
