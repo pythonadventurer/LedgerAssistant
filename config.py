@@ -23,7 +23,7 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 journal_file = Path(config['transactions']['journal'])
 if config['accounts']['source'] == 'file':
-    journal_file = Path(config['accounts']['file'])
-    with open(journal_file,"r",encoding='utf-8') as f:
+    accounts_file = Path(config['accounts']['file'])
+    with open(accounts_file,"r",encoding='utf-8') as f:
         accounts = [account for account in list(f.read().split("\n"))]
 

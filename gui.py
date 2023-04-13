@@ -17,17 +17,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 from tkinter import *
 from tkinter import ttk
-from tkintertable import TableCanvas, TableModel
+from tkinter import filedialog
 import configparser
 from pathlib import Path
+from config import *
+
+import decimal
+decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
 config = configparser.ConfigParser()
 config.read('config.ini')
 config = configparser.ConfigParser()
 config.read('config.ini')
 if config['accounts']['source'] == 'file':
-    journal_file = Path(config['accounts']['file'])
-    with open(journal_file,"r",encoding='utf-8') as f:
+    accounts_file = Path(config['accounts']['file'])
+    with open(accounts_file,"r",encoding='utf-8') as f:
         accounts = [account for account in list(f.read().split("\n"))]
 
 
@@ -35,8 +39,15 @@ class MainMenu(Menu):
     def __init__(self,root):
         Menu.__init__ (self,root)
 
+        def SelectJournal():
+            JournalFile = filedialog.askopenfilename(title = "Select a Journal File")
+            config['transactions']['journal'] = JournalFile
+            with open('config.ini','w') as f:
+                config.write(f)
+
         mnuFile = Menu(self,tearoff=0)
         self.add_cascade(label="File",menu=mnuFile)
+        mnuFile.add_command(label="Select Journal",command=SelectJournal)
         mnuFile.add_command(label="Quit",command=root.quit)
 
         mnuEdit = Menu(self,tearoff=0)
@@ -175,3 +186,4 @@ class TransactionEntry(Frame):
         fraTransaction.grid(row=0,column=0,padx=5,pady=5,sticky=(E,W))
         fraEnterSplits.grid(row=1,column=0,padx=5,pady=5,sticky=(E,W))
         fraSplitDetails.grid(row=2,column=0,padx=5,pady=5)
+
