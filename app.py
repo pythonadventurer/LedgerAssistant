@@ -16,14 +16,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
-import configparser
-from pathlib import Path
+from tkinter import *
+from tkinter import ttk
+from gui import *
+from models import *
 
-config = configparser.ConfigParser()
-config.read('config.ini')
-journal_file = Path(config['transactions']['journal'])
-if config['accounts']['source'] == 'file':
-    accounts_file = Path(config['accounts']['file'])
-    with open(accounts_file,"r",encoding='utf-8') as f:
-        accounts = [account for account in list(f.read().split("\n"))]
 
+class LedgerAssistant:
+
+    def __init__(self,root):
+        root.title("LedgerAssistant")
+        mnuMain = MainMenu(root)
+        root.config(menu=mnuMain)
+        EnterTransaction = TransactionEntry(root)
+
+
+
+root = Tk()
+LedgerAssistant(root)
+root.mainloop()

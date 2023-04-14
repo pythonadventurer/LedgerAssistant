@@ -17,5 +17,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 import configparser
+from models import *
+import decimal
+decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+
+
 config = configparser.ConfigParser()
 config.read('config.ini')
+
+# Amounts are provided as numbers with two decimal places.
+# Stored as integers in which the last two digits represent cents.
+
+test_transaction = Transaction('2023-04-12','Amazon 112-0088785-1211437 ')
+test_transaction.add_split('','Liabilities:AAA Credit Card',-85.38)
+test_transaction.add_split('Travelon Small Backpack Peacock One Size', 'Expenses:Travel:Misc', 42.59)
+test_transaction.add_split('Beraliy Travel Backpack', 'Expenses:Travel:Misc', 42.79)
+print(test_transaction.hledger_format())
+
