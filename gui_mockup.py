@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 from tkinter import *
 from tkinter import ttk
-from tkintertable import TableCanvas, TableModel
+# from tkintertable import TableCanvas, TableModel
 from config import *
 
 root = Tk()
