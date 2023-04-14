@@ -63,6 +63,13 @@ class TransactionEntry(Frame):
     def __init__(self,parent):
         Frame.__init__ (self,parent)
 
+        def post():
+            varDate = txtDate.get()
+            varDescription = txtDescription.get()
+
+        def AddSplit():
+            
+
         ## Create Transaction Widgets
         fraTransaction = Frame(self,bd=2,relief="raised")
 
@@ -75,7 +82,7 @@ class TransactionEntry(Frame):
         lblDistAmt = Label(fraTransaction,text="Amt. to Distribute",font=("Helvetica",12),anchor=E)
         txtDistAmt = Entry(fraTransaction, font=("Helvetica",12))
 
-        btnPost = Button(fraTransaction,text="Post",width=10)
+        btnPost = Button(fraTransaction,text="Post",width=10,command=post)
 
         ## Grid Transaction Widgets
         lblDate.grid(row=0,column=0,sticky=(W,E),padx=5,pady=5)
