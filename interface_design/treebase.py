@@ -536,7 +536,7 @@ def select_record(e):
 	# Grab record values
 	values = my_tree.item(selected, 'values')
 
-	# outpus to entry boxes
+	# output to entry boxes
 	fn_entry.insert(0, values[0])
 	ln_entry.insert(0, values[1])
 	id_entry.insert(0, values[2])

@@ -68,7 +68,12 @@ class TransactionEntry(Frame):
             varDescription = txtDescription.get()
 
         def AddSplit():
-            
+            varAccount = cboAccount.get()
+            varAmount = txtSplitAmt.get()
+            varMemo = txtMemo.get()
+            tblSplits.insert(parent='',index='end',iid=None,text='',
+                             values=(varAccount,varAmount,varMemo))
+
 
         ## Create Transaction Widgets
         fraTransaction = Frame(self,bd=2,relief="raised")
@@ -80,7 +85,10 @@ class TransactionEntry(Frame):
         txtDescription = Entry(fraTransaction,font=("Helvetica",12))
 
         lblDistAmt = Label(fraTransaction,text="Amt. to Distribute",font=("Helvetica",12),anchor=E)
-        txtDistAmt = Entry(fraTransaction, font=("Helvetica",12))
+        txtDistAmt = Entry(fraTransaction, font=("Helvetica",12),)
+
+        # Default
+        txtDistAmt.insert(0,"0.0")
 
         btnPost = Button(fraTransaction,text="Post",width=10,command=post)
 
@@ -109,9 +117,11 @@ class TransactionEntry(Frame):
 
         lblSplitAmount = Label(fraEnterSplits,text="Amount",font=("Helvetica",12),anchor=E)
         txtSplitAmt = Entry(fraEnterSplits,font=("Helvetica",12))
+        txtSplitAmt.insert(0,"0.0")
 
         lblTaxAmount = Label(fraEnterSplits,text="Tax Amt.",font=("Helvetica",12),anchor=E)
         txtTaxAmount = Entry(fraEnterSplits,font=("Helvetica",12))
+        txtTaxAmount.insert(0,"0.0")
 
         varApplyTax = IntVar()
         chkApplyTax = ttk.Checkbutton(fraEnterSplits,text="Tax %",variable=varApplyTax,onvalue=1,offvalue=0)
@@ -148,7 +158,7 @@ class TransactionEntry(Frame):
         fraButtonRow = Frame(fraEnterSplits)
 
         # btnAdd = Button(fraButtonRow,text="Add",width=10,command=add_split)
-        btnAdd = Button(fraButtonRow,text="Add",width=10)
+        btnAdd = Button(fraButtonRow,text="Add",width=10,command=AddSplit)
         btnUpdate = Button(fraButtonRow,text="Update",width=10)
         btnDelete = Button(fraButtonRow,text="Delete",width=10)
 
