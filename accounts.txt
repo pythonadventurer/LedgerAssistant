@@ -1,9 +1,12 @@
 Assets:Checking Account
 Liabilities:Credit Card
-Income:Gross Wages
-Expenses:Rent
-Expenses:Groceries
-Expenses:Utilities
-Expenses:Entertainment
 Expenses:Auto Repairs
+Expenses:Entertainment
 Expenses:Fuel
+Expenses:Groceries
+Expenses:Pet Expenses:Cat Food & Supplies
+Expenses:Rent
+Expenses:Travel
+Expenses:Utilities
+Income:Gross Wages
+

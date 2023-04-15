@@ -20,6 +20,7 @@ import configparser
 from models import *
 import decimal
 from decimal import Decimal
+from pathlib import Path
 
 from datetime import datetime
 from dateutil.parser import *
@@ -41,8 +42,14 @@ def ValidateAmount(AmountString):
     # ensure amount has 2 decimal places, rounded to nearest 100th.
     return str(Decimal(AmountString).quantize(Decimal('.01')))
 
+def GetJournalAccounts(JournalFile):
+    with open(JournalFile,"r",encoding="utf-8") as f:
+        accounts = []
+        for line in list(f.read().split("\n")):
+            if line.startswith("account "):
+                accounts.append(line[8:])
+    return accounts
 
-print(ValidateDate('4/15/23'))
-print(ValidateDate('4/15'))
-print(ValidateAmount('1'))
-print(ValidateAmount('1.2435'))
+
+
+

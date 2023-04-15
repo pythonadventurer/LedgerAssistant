@@ -32,7 +32,7 @@ class Transaction:
     def add_split(self,memo,account,amount):
         # Amounts are provided as numbers with two decimal places.
         # Stored as integers in which the last two digits represent cents.
-        amount = int(amount * 100)
+        amount = int(float(amount) * 100)
         split = TransactionSplit(memo, account, amount)
         self.splits.append(split)
 
@@ -77,8 +77,9 @@ class TransactionSplit:
         self.amount = amount
 
 class Journal:
-    def __init__(self):
+    def __init__(self,filepath):
         self.transactions = []
+        self.filepath = filepath
 
     def balance(self):
         bal = 0
@@ -154,7 +155,7 @@ class Journal:
             hledger_text +="\n"
         return hledger_text
 
-    def export_hledger(self,accounts_file,file_path):
+    def export_hledger(self,accounts_list,file_path):
         """
         Export to hledger format. Accounts file : list of account and
         commodity declarations to put at beginning of ledger.
