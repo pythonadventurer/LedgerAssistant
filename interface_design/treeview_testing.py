@@ -94,5 +94,8 @@ def delete_records():
     	my_tree.delete(record)
 
 # delete_records()
+items = my_tree.get_children()
+for item in items:
+    print(my_tree.item(item))
 
 root.mainloop()

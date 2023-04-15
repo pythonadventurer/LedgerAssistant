@@ -15,12 +15,22 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
+
+# TODO Account combo box limit to list
+# TODO Account combo box auto fill on partial entry
+# TODO Amt to distribute set to read-only
+# TODO Recalc total amount before adding
+# TODO Add total amount to table
+
+
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 import configparser
 from pathlib import Path
 from config import *
+
+
 
 import decimal
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
@@ -33,7 +43,7 @@ if config['accounts']['source'] == 'file':
     accounts_file = Path(config['accounts']['file'])
     with open(accounts_file,"r",encoding='utf-8') as f:
         accounts = [account for account in list(f.read().split("\n"))]
-
+varTaxPct = decimal.Decimal(config['transactions']['tax_pct'])/100
 
 class MainMenu(Menu):
     def __init__(self,root):
@@ -63,17 +73,61 @@ class TransactionEntry(Frame):
     def __init__(self,parent):
         Frame.__init__ (self,parent)
 
-        def post():
-            varDate = txtDate.get()
-            varDescription = txtDescription.get()
+        def ValidateDate(DateString):
 
+        def post():
+            pass
+            
         def AddSplit():
+            UpdateSplitTotal()
             varAccount = cboAccount.get()
-            varAmount = txtSplitAmt.get()
+            varAmount = txtTotalAmount.get()
             varMemo = txtMemo.get()
             tblSplits.insert(parent='',index='end',iid=None,text='',
                              values=(varAccount,varAmount,varMemo))
+            ClearSplitEntry()
+            UpdateDistAmt()
 
+        def UpdateDistAmt():
+            items = tblSplits.get_children()
+            splits_total = decimal.Decimal('0.00')
+
+            for item in items:
+                splits_total += decimal.Decimal(tblSplits.item(item)['values'][1])
+
+            varDistAmount.set(decimal.Decimal(splits_total))
+
+        def CalculateTax():
+            if varApplyTax.get() == 1:
+                tax_amt = decimal.Decimal(varSplitAmount.get()) * varTaxPct
+
+                # Round to nearest cent
+                tax_amt = decimal.Decimal(tax_amt).quantize(decimal.Decimal('.01'),
+                       rounding=decimal.ROUND_HALF_UP)
+
+                varTaxAmount.set(str(tax_amt))
+                
+            else:
+                varTaxAmount.set("0.0")
+                varTotalAmount.set(varSplitAmount.get())
+            UpdateSplitTotal()               
+            UpdateDistAmt()
+
+        def UpdateSplitTotal():
+            varTotalAmount.set(decimal.Decimal(varSplitAmount.get())+decimal.Decimal(varTaxAmount.get()))
+
+        def ClearSplitEntry():
+            varSplitAmount.set("0.00")
+            varTaxAmount.set("0.00")
+            varTotalAmount.set("0.00")
+            varMemo.set("")
+            UpdateDistAmt()
+
+        def DeleteSplit():
+            x = tblSplits.selection()[0]
+            tblSplits.delete(x)
+            UpdateDistAmt()
+        
 
         ## Create Transaction Widgets
         fraTransaction = Frame(self,bd=2,relief="raised")
@@ -83,9 +137,11 @@ class TransactionEntry(Frame):
 
         lblDescription = Label(fraTransaction,text="Description",font=("Helvetica",12),anchor=E)
         txtDescription = Entry(fraTransaction,font=("Helvetica",12))
+        
+        varDistAmount = StringVar()
 
         lblDistAmt = Label(fraTransaction,text="Amt. to Distribute",font=("Helvetica",12),anchor=E)
-        txtDistAmt = Entry(fraTransaction, font=("Helvetica",12),)
+        txtDistAmt = Entry(fraTransaction, textvariable=varDistAmount,font=("Helvetica",12))
 
         # Default
         txtDistAmt.insert(0,"0.0")
@@ -115,25 +171,31 @@ class TransactionEntry(Frame):
         cboAccount = ttk.Combobox(fraEnterSplits,textvariable=varAccount,font=("Helvetica",12))
         cboAccount['values'] = accounts
 
+        varSplitAmount = StringVar()
         lblSplitAmount = Label(fraEnterSplits,text="Amount",font=("Helvetica",12),anchor=E)
-        txtSplitAmt = Entry(fraEnterSplits,font=("Helvetica",12))
-        txtSplitAmt.insert(0,"0.0")
+        txtSplitAmt = Entry(fraEnterSplits,textvariable=varSplitAmount,font=("Helvetica",12))
+        varSplitAmount.set("0.0")
 
+        varTaxAmount = StringVar()
         lblTaxAmount = Label(fraEnterSplits,text="Tax Amt.",font=("Helvetica",12),anchor=E)
-        txtTaxAmount = Entry(fraEnterSplits,font=("Helvetica",12))
-        txtTaxAmount.insert(0,"0.0")
+        txtTaxAmount = Entry(fraEnterSplits,textvariable=varTaxAmount,font=("Helvetica",12),)
+        varTaxAmount.set("0.0")
 
         varApplyTax = IntVar()
-        chkApplyTax = ttk.Checkbutton(fraEnterSplits,text="Tax %",variable=varApplyTax,onvalue=1,offvalue=0)
+        chkApplyTax = Checkbutton(fraEnterSplits,text="Tax %",variable=varApplyTax,onvalue=1,offvalue=0,command=CalculateTax)
+        chkApplyTax.deselect()
+
         lblTaxPct = Label(fraEnterSplits,text="7.0",font=("Helvetica",10))
 
         varTotalAmount = StringVar()
         lblTotalAmount = Label(fraEnterSplits,text="Total Amt.",font=("Helvetica",12),anchor=E)
         txtTotalAmount = Entry(fraEnterSplits,textvariable=varTotalAmount,font=("Helvetica",12))
+        varTotalAmount.set("0.0")
 
         varMemo = StringVar()
         lblMemo = Label(fraEnterSplits,text="Memo",font=("Helvetica",12),anchor=E)
         txtMemo = Entry(fraEnterSplits,textvariable=varMemo,font=("Helvetica",12))
+        varMemo.set("")
 
         ## Grid Split Entry Widgets
         lblAccount.grid(row=0,column=0,padx=5,pady=5,sticky=(E,W))
@@ -160,7 +222,7 @@ class TransactionEntry(Frame):
         # btnAdd = Button(fraButtonRow,text="Add",width=10,command=add_split)
         btnAdd = Button(fraButtonRow,text="Add",width=10,command=AddSplit)
         btnUpdate = Button(fraButtonRow,text="Update",width=10)
-        btnDelete = Button(fraButtonRow,text="Delete",width=10)
+        btnDelete = Button(fraButtonRow,text="Delete",width=10,command=DeleteSplit)
 
         ## Grid Split Entry Buttons
         btnAdd.grid(row=0,column=0,padx=5,pady=5)
@@ -189,14 +251,14 @@ class TransactionEntry(Frame):
         # Format Columns
         tblSplits.column("#0",width=0,stretch=NO)
         tblSplits.column("account",anchor=W,width=150)
-        tblSplits.column("amount",anchor=W,width=75)
+        tblSplits.column("amount",anchor=E,width=75)
         tblSplits.column("memo",anchor=W,width=200)
 
         # Create Headings
         tblSplits.heading("#0",text="",anchor=W)
-        tblSplits.heading("account",text="Account",anchor=W)
-        tblSplits.heading("amount",text="Amount",anchor=W)
-        tblSplits.heading("memo",text="Memo",anchor=W)
+        tblSplits.heading("account",text="Account",anchor=CENTER)
+        tblSplits.heading("amount",text="Amount",anchor=CENTER)
+        tblSplits.heading("memo",text="Memo",anchor=CENTER)
 
         # Grid this
         self.grid(row=0,column=0,padx=5,pady=5)
@@ -204,3 +266,4 @@ class TransactionEntry(Frame):
         fraEnterSplits.grid(row=1,column=0,padx=5,pady=5,sticky=(E,W))
         fraSplitDetails.grid(row=2,column=0,padx=5,pady=5)
 
+        

@@ -19,26 +19,30 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import configparser
 from models import *
 import decimal
-# decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+from decimal import Decimal
+
+from datetime import datetime
+from dateutil.parser import *
+
+decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
 
 config = configparser.ConfigParser()
 config.read('config.ini')
-varTaxPct = decimal.Decimal(config['transactions']['tax_pct'])/100
+
 # Amounts are provided as numbers with two decimal places.
 # Stored as integers in which the last two digits represent cents.
 
-# test_transaction = Transaction('2023-04-12','Amazon 112-0088785-1211437 ')
-# test_transaction.add_split('','Liabilities:AAA Credit Card',-85.38)
-# test_transaction.add_split('Travelon Small Backpack Peacock One Size', 'Expenses:Travel:Misc', 42.59)
-# test_transaction.add_split('Beraliy Travel Backpack', 'Expenses:Travel:Misc', 42.79)
-# print(test_transaction.hledger_format())
+def ValidateDate(DateString):
+    # convert date string to YYYY-MM-DD
+    return parse(DateString).strftime("%Y-%m-%d")
+
+def ValidateAmount(AmountString):
+    # ensure amount has 2 decimal places, rounded to nearest 100th.
+    return str(Decimal(AmountString).quantize(Decimal('.01')))
 
 
-def calc_tax(num_string):
-    result = decimal.Decimal(num_string) * varTaxPct
-    return decimal.Decimal(result).quantize(decimal.Decimal('.01'),
-           rounding=decimal.ROUND_HALF_UP)
-
-
-print(calc_tax('4.56'))
+print(ValidateDate('4/15/23'))
+print(ValidateDate('4/15'))
+print(ValidateAmount('1'))
+print(ValidateAmount('1.2435'))
