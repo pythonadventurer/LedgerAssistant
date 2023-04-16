@@ -1,0 +1,21 @@
+account Assets:Checking Account
+account Liabilities:Credit Card
+account Income:Gross Pay
+account Expenses:Dining
+account Expenses:Entertainment
+account Expenses:Gas
+account Expenses:Groceries
+account Expenses:Internet
+account Expenses:Medical
+account Expenses:Rent
+account Expenses:Utilities
+commodity 1000.00
+
+2023-04-16 Payroll
+    Income:Gross Pay                                    -1000.00
+    Assets:Checking Account                              1000.00
+
+2023-05-01 Rent
+    Assets:Checking Account                              -300.00
+    Expenses:Rent                                         300.00
+

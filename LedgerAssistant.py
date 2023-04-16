@@ -1,5 +1,5 @@
 """
-LedgerAssistant - a GUI front end for entering Ledger-compatible transactions.
+Ledger Assistant - a GUI front end for entering Ledger-compatible transactions.
 Copyright (C) 2023  Robert T. Fowler IV
 
 This program is free software: you can redistribute it and/or modify

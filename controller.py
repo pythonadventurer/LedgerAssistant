@@ -1,5 +1,5 @@
 """
-LedgerAssistant - a GUI front end for entering Ledger-compatible transactions.
+Ledger Assistant - a GUI front end for entering Ledger-compatible transactions.
 Copyright (C) 2023  Robert T. Fowler IV
 
 This program is free software: you can redistribute it and/or modify
@@ -42,6 +42,7 @@ def AmtToDecimal(Amount):
     """
     return str(decimal.Decimal(Amount).quantize(decimal.Decimal('.01')))
 
+# TODO StringAdd
 
 def StringAdd(String):
     """
@@ -51,6 +52,7 @@ def StringAdd(String):
         '2+10.5+5.43'
     """
     pass
+# TODO StringMultiply
 
 def StringMultiply(String):
     """

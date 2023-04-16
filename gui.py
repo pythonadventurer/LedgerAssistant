@@ -16,10 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
-# TODO Account combo box limit to list
-# TODO Account combo box auto fill on partial entry
-# TODO Amt to distribute set to read-only
-# TODO Recalc total amount before adding
 
 
 from tkinter import *
@@ -44,7 +40,6 @@ if varAccountsSource == 'file':
 
 else:
     accounts = CurrentJournal.GetJournalAccounts()
-
 
 class LedgerAssistant:
 
@@ -72,17 +67,21 @@ class MainMenu(Menu):
         mnuEdit = Menu(self,tearoff=0)
         self.add_cascade(label="Edit",menu=mnuEdit)
         mnuEdit.add_command(label="Preferences")
+        # TODO Preferences window - include select journal
+        # TODO Status bar at bottom to show current journal file path
 
         mnuHelp = Menu(self,tearoff=0)
         self.add_cascade(label="Help",menu=mnuHelp)
         mnuHelp.add_command(label="About")
-
+        # TODO Help --> About
+        # TODO Help --> Documentation
 
 class TransactionEntry(Frame):
     def __init__(self,parent):
         Frame.__init__ (self,parent)
         
         def post():
+            # Don't allow posting unless balance is zero.
             CurrentTransaction = Transaction(varDate.get(),varDescription.get())
             lines = tblSplits.get_children()
             for line in lines:
@@ -199,6 +198,10 @@ class TransactionEntry(Frame):
         ### lblAccount : anchor seems to make no difference
         varAccount = StringVar()
         lblAccount = Label(fraEnterSplits,text="Account",font=("Helvetica",12),anchor=E)
+
+        # TODO Account combo box limit to list
+        # TODO Account combo box auto fill on partial entry
+
         cboAccount = ttk.Combobox(fraEnterSplits,textvariable=varAccount,font=("Helvetica",12))
         cboAccount['values'] = accounts
 
@@ -214,6 +217,7 @@ class TransactionEntry(Frame):
         txtTaxAmount = Entry(fraEnterSplits,state=DISABLED,  textvariable=varTaxAmount,font=("Helvetica",12),)
         varTaxAmount.set("0.0")
 
+        # TODO Fix inconsisent behavior of apply tax
         varApplyTax = IntVar()
         chkApplyTax = Checkbutton(fraEnterSplits,text="Tax %",variable=varApplyTax,onvalue=1,offvalue=0,command=CalculateTax)
         chkApplyTax.deselect()
