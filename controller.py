@@ -15,40 +15,49 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
-
-import configparser
-from models import *
 import decimal
-from decimal import Decimal
 from pathlib import Path
-
 from datetime import datetime
 from dateutil.parser import *
 
+# Rounding for normal people!
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
-
-config = configparser.ConfigParser()
-config.read('config.ini')
-
-# Amounts are provided as numbers with two decimal places.
-# Stored as integers in which the last two digits represent cents.
-
 def ValidateDate(DateString):
-    # convert date string to YYYY-MM-DD
+    """    
+    Convert date string to YYYY-MM-DD
+    """
     return parse(DateString).strftime("%Y-%m-%d")
 
 def ValidateAmount(AmountString):
-    # ensure amount has 2 decimal places, rounded to nearest 100th.
-    return str(Decimal(AmountString).quantize(Decimal('.01')))
+    """
+    Ensure amount has 2 decimal places, rounded to nearest 100th.
+    """
+    return str(decimal.Decimal(AmountString).quantize(decimal.Decimal('.01')))
 
-def GetJournalAccounts(JournalFile):
-    with open(JournalFile,"r",encoding="utf-8") as f:
-        accounts = []
-        for line in list(f.read().split("\n")):
-            if line.startswith("account "):
-                accounts.append(line[8:])
-    return accounts
+
+def AmtToDecimal(Amount):
+    """
+    Convert a float to a number string, rounded to 2 decimal places.
+    """
+    return str(decimal.Decimal(Amount).quantize(decimal.Decimal('.01')))
+
+
+def StringAdd(String):
+    """
+    return the sum the numbers in string separated by plus signs:
+    all numbers will be converted to decimals rounded to 2 decimal
+    places:
+        '2+10.5+5.43'
+    """
+    pass
+
+def StringMultiply(String):
+    """
+    return the product of numbers in a string separated by asterisks:
+       '14*7*8*1.07'
+    """
+    pass
 
 
 

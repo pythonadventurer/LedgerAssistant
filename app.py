@@ -18,19 +18,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 from tkinter import *
 from tkinter import ttk
+from config import *
 from gui import *
 from models import *
-
-
-class LedgerAssistant:
-
-    def __init__(self,root):
-        root.title("LedgerAssistant")
-        mnuMain = MainMenu(root)
-        root.config(menu=mnuMain)
-        EnterTransaction = TransactionEntry(root)
-
-
 
 root = Tk()
 LedgerAssistant(root)

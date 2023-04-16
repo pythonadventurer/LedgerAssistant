@@ -18,12 +18,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import configparser
 from pathlib import Path
+import decimal
 
+# Read config values into variables
 config = configparser.ConfigParser()
 config.read('config.ini')
-journal_file = Path(config['transactions']['journal'])
-if config['accounts']['source'] == 'file':
-    accounts_file = Path(config['accounts']['file'])
-    with open(accounts_file,"r",encoding='utf-8') as f:
-        accounts = [account for account in list(f.read().split("\n"))]
+varAccountsSource = config['accounts']['source']
+varAccountsFile = config['accounts']['file']
+varJournalFile = Path(config['transactions']['journal'])
+varTaxPct = decimal.Decimal(config['transactions']['tax_pct'])/100
 

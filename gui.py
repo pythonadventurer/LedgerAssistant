@@ -25,28 +25,34 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-import configparser
+from tkinter import messagebox
 from pathlib import Path
+from models import *
+import decimal
 from config import *
 from controller import *
+from tests import TestTransaction
 
-import decimal
+
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
-config = configparser.ConfigParser()
-config.read('config.ini')
-config = configparser.ConfigParser()
-config.read('config.ini')
-CurrentJournal = Journal(Path(config['transactions']['journal']))
-if config['accounts']['source'] == 'file':
-    accounts_file = Path(config['accounts']['file'])
-    with open(accounts_file,"r",encoding='utf-8') as f:
-        accounts = [account for account in list(f.read().split("\n"))]
+CurrentJournal = Journal(varJournalFile)
+CurrentJournal.get_hledger_trans(varJournalFile)
+
+if varAccountsSource == 'file':
+    pass
+
 else:
-    accounts = GetJournalAccounts(JournalFile)
+    accounts = CurrentJournal.GetJournalAccounts()
 
-varTaxPct = decimal.Decimal(config['transactions']['tax_pct'])/100
 
+class LedgerAssistant:
+
+    def __init__(self,root):
+        root.title("LedgerAssistant")
+        mnuMain = MainMenu(root)
+        root.config(menu=mnuMain)
+        EnterTransaction = TransactionEntry(root)
 
 class MainMenu(Menu):
     def __init__(self,root):
@@ -75,24 +81,27 @@ class MainMenu(Menu):
 class TransactionEntry(Frame):
     def __init__(self,parent):
         Frame.__init__ (self,parent)
-
+        
         def post():
             CurrentTransaction = Transaction(varDate.get(),varDescription.get())
-            items = tblSplits.get_children()
-            for item in items:
-                CurrentTransaction.add_split(tblSplits.item(item)['values'][2],
-                                             tblSplits.item(item)['values'][0],
-                                             tblSplits.item(item)['values'][1])
-                print(CurrentTransaction.hledger_format())
-
+            lines = tblSplits.get_children()
+            for line in lines:
+                CurrentTransaction.add_split(tblSplits.item(line)['values'][2],
+                                             tblSplits.item(line)['values'][0],
+                                             tblSplits.item(line)['values'][1])
+            CurrentJournal.transactions.append(CurrentTransaction)
+            CurrentJournal.export_hledger(varJournalFile)
+          
             ClearTrasactionEntry()
             ClearSplitEntry()
             ClearSplits()
+            messagebox.showinfo("Ledger Assistant","Transaction has been posted.")
+
            
         def AddSplit():
             UpdateSplitTotal()
             tblSplits.insert(parent='',index='end',iid=None,text='',
-                             values=(varAccount.get(),varSplitAmount.get(),varMemo.get()))
+                             values=(varAccount.get(),varTotalAmount.get(),varMemo.get()))
             ClearSplitEntry()
             UpdateDistAmt()
 
@@ -167,9 +176,6 @@ class TransactionEntry(Frame):
         varDistAmount = StringVar()
         lblDistAmt = Label(fraTransaction,text="Amt. to Distribute",font=("Helvetica",12),anchor=E)
         txtDistAmt = Entry(fraTransaction, state=DISABLED,textvariable=varDistAmount,font=("Helvetica",12))
-
-        # Default
-        txtDistAmt.insert(0,"0.0")
 
         btnPost = Button(fraTransaction,text="Post",width=10,command=post)
 
@@ -260,7 +266,6 @@ class TransactionEntry(Frame):
         # Split Details Frame
         fraSplitDetails = Frame(self,bd=2,relief="raised")
 
-
         # Split Details Scrollbar
         scrSplitsScroll = Scrollbar(fraSplitDetails)
         scrSplitsScroll.pack(side=RIGHT,fill=Y)
@@ -293,5 +298,12 @@ class TransactionEntry(Frame):
         fraEnterSplits.grid(row=1,column=0,padx=5,pady=5,sticky=(E,W))
         fraSplitDetails.grid(row=2,column=0,padx=5,pady=5)
 
-        ClearSplitEntry()
+        # ClearSplitEntry()
         
+        # varDate.set(TestTransaction.date)
+        # varDescription.set(TestTransaction.description)
+        # for split in TestTransaction.splits:
+        #     tblSplits.insert(parent='',index='end',iid=None,text='',values=(split.account,split.amount,split.memo))
+
+        ClearSplitEntry()
+        UpdateDistAmt()

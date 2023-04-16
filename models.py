@@ -16,6 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 import decimal
+import re
+
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
 
@@ -32,15 +34,14 @@ class Transaction:
     def add_split(self,memo,account,amount):
         # Amounts are provided as numbers with two decimal places.
         # Stored as integers in which the last two digits represent cents.
-        amount = int(float(amount) * 100)
         split = TransactionSplit(memo, account, amount)
         self.splits.append(split)
 
     def balance(self):
-        bal = 0
+        bal = decimal.Decimal('0.00')
         for split in self.splits:
-            bal += split.amount
-        return bal/100
+            bal += decimal.Decimal(split.amount)
+        return str(bal)
 
     def printout(self):
         print(self.date, self.description)
@@ -82,10 +83,21 @@ class Journal:
         self.filepath = filepath
 
     def balance(self):
-        bal = 0
+        bal = decimal.Decimal("0.00")
         for transaction in self.transactions:
-            bal += transaction.balance()
-        return bal
+            bal += decimal.Decimal(transaction.balance())
+        return str(bal)
+
+    def GetJournalAccounts(self):
+        """
+        Return a list of accounts from the journal
+        """
+        with open(self.filepath,"r",encoding="utf-8") as f:
+            accounts = []
+            for line in list(f.read().split("\n")):
+                if line.startswith("account "):
+                    accounts.append(line[8:])
+        return accounts
 
     def get_hledger_trans(self,ledger_file):
         """
@@ -108,23 +120,21 @@ class Journal:
                     split_line = lines[n]
                     split_account = split_line[4:split_line.find("  ",4)]
                     if ";" in lines[n]:
-                        split_memo = split_line[split_line.find(";"):]
+                        split_memo = split_line[split_line.find(";")+1:].strip()
                         split_amount = split_line[len(split_account)+5:split_line.find(";")].strip()
                     else:
-                        split_memo = ""
-                        split_amount = split_line[len(split_account)+5:].strip()
-                    try:
-                        split_amount = Decimal(split_amount)*100
-                        split_amount = int(split_amount)
-                        new_trans.add_split(split_memo,split_account,split_amount)
-                    except (ValueError, DecimalException):
-                        break
+                       split_memo = ""
+                       split_amount = split_line[len(split_account)+5:].strip()
+                    new_trans.add_split(split_memo,split_account,split_amount)
                     try:
                         if re.match("^\d\d\d\d-\d\d-\d\d",lines[n+1]) or lines[n+1] == "\n" or lines[n+1] == "":
                             journal.append(new_trans)
 
                     except IndexError:
                         continue
+
+                    except UnboundLocalError:
+                        pass
        
         self.transactions = journal
 
@@ -137,10 +147,9 @@ class Journal:
         for transaction in self.transactions:
             hledger_text += f"{transaction.date} {transaction.description}\n"
             for split in transaction.splits:
-                amount = str("{:.2f}".format(Decimal(split.amount)/100))
-                num_spaces = (60-len(split.account)-len(amount))
+                num_spaces = (60-len(split.account)-len(split.amount))
                 spacing = num_spaces * " "
-                hledger_text += f"    {split.account}{spacing}{amount}"
+                hledger_text += f"    {split.account}{spacing}{split.amount}"
                 if split.memo != "":
                     # sanitize memo field
                     memo = split.memo
@@ -150,12 +159,12 @@ class Journal:
                     memo = memo.replace(":"," ")
                     memo = memo.replace("\n"," ")
                     memo = memo.strip()
-                    hledger_text += f" {memo}"
+                    hledger_text += f" ; {memo}"
                 hledger_text +="\n"
             hledger_text +="\n"
         return hledger_text
 
-    def export_hledger(self,accounts_list,file_path):
+    def export_hledger(self,file_path):
         """
         Export to hledger format. Accounts file : list of account and
         commodity declarations to put at beginning of ledger.
@@ -165,9 +174,10 @@ class Journal:
 
         # add account declarations
         hledger_text = ""
-        if accounts_file != None:
-            with open(accounts_file,"r",encoding="utf-8") as accounts:
-                hledger_text += accounts.read()
+        for account in self.GetJournalAccounts():
+            hledger_text += "account " + account + "\n"
+
+        hledger_text += "commodity 1000.00\n\n"
 
         # convert the transactions to hledger format
         hledger_text += self.hledger_journal_text()
@@ -213,14 +223,14 @@ class Journal:
             if row["Type"] == "Shipping label":
                 split_memo = " ; memo: Shipping label - " + row["Description"]
                 split_account = "Expenses:Cost of Sales:Shipping Costs"
-                split_amount = -int(Decimal(row["Net amount"])*100)
+                split_amount = -int(decimal.Decimal(row["Net amount"])*100)
                 split = TransactionSplit(split_memo, split_account, split_amount)
                 payout_trans.splits.append(split)    
 
             if row["Type"] == "Other fee":
                 split_memo = " ; memo: " + row["Description"]
                 split_account = "Expenses:Cost of Sales:Ebay Fees"
-                split_amount = abs(int(Decimal(row["Net amount"])*100))
+                split_amount = abs(int(decimal.Decimal(row["Net amount"])*100))
                 split = TransactionSplit(split_memo, split_account, split_amount)
                 payout_trans.splits.append(split) 
 
@@ -228,27 +238,27 @@ class Journal:
                 # record the sale as a credit (-)
                 split_memo = " ; memo: " + row["Custom label"] + " " + row["Item title"]
                 split_account = "Income:Current Income:Sales"
-                split_amount = -abs(int(Decimal(row["Item subtotal"])*100))
+                split_amount = -abs(int(decimal.Decimal(row["Item subtotal"])*100))
                 split = TransactionSplit(split_memo, split_account, split_amount)
                 payout_trans.splits.append(split) 
 
                 # record buyer paid shipping amount as a credit to shipping costs
                 split_memo = " ; memo: Buyer paid shipping"
                 split_account = "Expenses:Cost of Sales:Shipping Costs"
-                split_amount = -abs(int(Decimal(row["Shipping and handling"])*100))
+                split_amount = -abs(int(decimal.Decimal(row["Shipping and handling"])*100))
                 split = TransactionSplit(split_memo, split_account, split_amount)
                 payout_trans.splits.append(split) 
 
                 # record final value fees
                 split_memo = ""
                 split_account = "Expenses:Cost of Sales:Ebay Fees"
-                split_amount = abs(int(Decimal(row["Final Value Fee - fixed"])*100))
+                split_amount = abs(int(decimal.Decimal(row["Final Value Fee - fixed"])*100))
                 split = TransactionSplit(split_memo, split_account, split_amount)
                 payout_trans.splits.append(split) 
 
                 split_memo = ""
                 split_account = "Expenses:Cost of Sales:Ebay Fees"
-                split_amount = abs(int(Decimal(row["Final Value Fee - variable"])*100))
+                split_amount = abs(int(decimal.Decimal(row["Final Value Fee - variable"])*100))
                 split = TransactionSplit(split_memo, split_account, split_amount)
                 payout_trans.splits.append(split)
 
@@ -261,7 +271,7 @@ class Journal:
                 if split_amount == "0" or split_amount == "--":
                     split_amount = 0
                 else:
-                    split_amount = -int(Decimal(split_amount)*100)
+                    split_amount = -int(decimal.Decimal(split_amount)*100)
                 split = TransactionSplit(split_memo, split_account, split_amount)
                 payout_trans.splits.append(split) 
 
