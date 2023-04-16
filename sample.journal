@@ -1,12 +1,14 @@
 account Assets:Checking Account
 account Liabilities:Credit Card
 account Income:Gross Pay
+account Expenses:Cleaning Supplies
 account Expenses:Dining
 account Expenses:Entertainment
 account Expenses:Gas
 account Expenses:Groceries
 account Expenses:Internet
 account Expenses:Medical
+account Expenses:Pet Supplies
 account Expenses:Rent
 account Expenses:Utilities
 commodity 1000.00

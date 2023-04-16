@@ -30,7 +30,7 @@ If you are not familiar with the concept of *plain text accounting*, please chec
  
 ## Screenshot
 
-![GUI](interface_design/gui-mockup.jpg)
+![](screenshot.jpg)
 
 ## Documentation
 - Select a journal file by clicking **File** --> **Select Journal**. 
