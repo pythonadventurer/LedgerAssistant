@@ -50,4 +50,5 @@ If you are not familiar with the concept of *plain text accounting*, please chec
 - When finished, **Amount to Distribute** should be zero. 
 - Click the **Post** button to add the transaction to the journal file.
 
-
+## Credit
+Big shout out to https://tkinter.com/ and [John Elder](https://codemy.com/about/) for reviving my interest in Tkinter and all the amazing things it can do!
