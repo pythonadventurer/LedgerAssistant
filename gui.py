@@ -59,6 +59,7 @@ class MainMenu(Menu):
             with open('config.ini','w') as f:
                 config.write(f)
 
+        # TODO Generic message box function "Sorry, this option has not yet been implemented."
         mnuFile = Menu(self,tearoff=0)
         self.add_cascade(label="File",menu=mnuFile)
         mnuFile.add_command(label="Select Journal",command=SelectJournal)
