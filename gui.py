@@ -202,10 +202,9 @@ class TransactionEntry(Frame):
         lblAccount = Label(fraEnterSplits,text="Account",font=("Helvetica",12),anchor=E)
 
         # TODO Account combo box limit to list
-        # TODO Account combo box auto fill on partial entry
 
-        cboAccount = ttk.Combobox(fraEnterSplits,textvariable=varAccount,font=("Helvetica",12))
-        cboAccount['values'] = accounts
+        cboAccount = AutocompleteCombobox(fraEnterSplits)
+        cboAccount.set_completion_list(accounts)
 
         varSplitAmount = StringVar()
         lblSplitAmount = Label(fraEnterSplits,text="Amount",font=("Helvetica",12),anchor=E)

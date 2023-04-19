@@ -13,17 +13,10 @@ https://mail.python.org/pipermail/tkinter-discuss/2012-January/003041.html
 import tkinter
 import tkinter.ttk
 
-
 class AutocompleteCombobox(tkinter.ttk.Combobox):
 
-        def set_completion_list(self, completion_list):
-                """Use our completion list as our drop down selection menu, arrows move through menu."""
-                self._completion_list = sorted(completion_list, key=str.lower) # Work with a sorted list
-                self._hits = []
-                self._hit_index = 0
-                self.position = 0
-                self.bind('<KeyRelease>', self.handle_keyrelease)
-                self['values'] = self._completion_list  # Setup our popup menu
+        def __init__(self,parent):
+            tkinter.ttk.Combobox.__init__ (self,parent)
 
         def autocomplete(self, delta=0):
                 """autocomplete the Combobox, delta may be 0/1/-1 to cycle through possible hits"""
@@ -64,21 +57,32 @@ class AutocompleteCombobox(tkinter.ttk.Combobox):
                         self.position = self.index(tkinter.END) # go to end (no selection)
                 if len(event.keysym) == 1:
                         self.autocomplete()
-                # No need for up/down, we'll jump to the popup
-                # list at the position of the autocompletion
+            # No need for up/down, we'll jump to the popup
+            # list at the position of the autocompletion
+        def set_completion_list(self, completion_list):
+                """Use our completion list as our drop down selection menu, arrows move through menu."""
+                self._completion_list = sorted(completion_list, key=str.lower) # Work with a sorted list
+                self._hits = []
+                self._hit_index = 0
+                self.position = 0
+                self.bind('<KeyRelease>', self.handle_keyrelease)
+                self['values'] = self._completion_list  # Setup our popup menu
 
-def test(test_list):
-        """Run a mini application to test the AutocompleteEntry Widget."""
-        root = tkinter.Tk(className=' AutocompleteEntry demo')
-        combo = AutocompleteCombobox(root)
-        combo.set_completion_list(test_list)
-        combo.pack()
-        combo.focus_set()
-        # I used a tiling WM with no controls, added a shortcut to quit
-        root.bind('<Control-Q>', lambda event=None: root.destroy())
-        root.bind('<Control-q>', lambda event=None: root.destroy())
-        root.mainloop()
 
-if __name__ == '__main__':
-        test_list = ('apple', 'banana', 'CranBerry', 'dogwood', 'alpha', 'Acorn', 'Anise' )
-        test(test_list)
+
+
+# def test(test_list):
+#         """Run a mini application to test the AutocompleteEntry Widget."""
+#         root = tkinter.Tk(className=' AutocompleteEntry demo')
+#         combo = AutocompleteCombobox(root)
+#         combo.set_completion_list(test_list)
+#         combo.pack()
+#         combo.focus_set()
+#         # I used a tiling WM with no controls, added a shortcut to quit
+#         root.bind('<Control-Q>', lambda event=None: root.destroy())
+#         root.bind('<Control-q>', lambda event=None: root.destroy())
+#         root.mainloop()
+
+# if __name__ == '__main__':
+#         test_list = ('apple', 'banana', 'CranBerry', 'dogwood', 'alpha', 'Acorn', 'Anise' )
+#         test(test_list)
