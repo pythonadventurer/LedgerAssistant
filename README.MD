@@ -12,7 +12,7 @@ If you are not familiar with the concept of *plain text accounting*, please chec
 ## Features
 - Easily enter complex transactions into a plain text accounting journal.
 - Uses the accounts listed at the beginning of the journal file.
-- Automatically calculates of sales tax. Handles both taxable and non-taxable
+- Automatically calculates sales tax. Handles both taxable and non-taxable
   items in the same transaction
 - Inserts transactions into the journal in correct sequence by date.
 
