@@ -22,6 +22,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
+from autocombo import AutocompleteCombobox
 from pathlib import Path
 from models import *
 import decimal
