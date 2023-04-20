@@ -102,7 +102,7 @@ class TransactionEntry(Frame):
         def AddSplit():
             UpdateSplitTotal()
             tblSplits.insert(parent='',index='end',iid=None,text='',
-                             values=(varAccount.get(),varTotalAmount.get(),varMemo.get()))
+                             values=(cboAccount.get(),varTotalAmount.get(),varMemo.get()))
             ClearSplitEntry()
             UpdateDistAmt()
 

@@ -59,6 +59,7 @@ class AutocompleteCombobox(tkinter.ttk.Combobox):
                         self.autocomplete()
             # No need for up/down, we'll jump to the popup
             # list at the position of the autocompletion
+
         def set_completion_list(self, completion_list):
                 """Use our completion list as our drop down selection menu, arrows move through menu."""
                 self._completion_list = sorted(completion_list, key=str.lower) # Work with a sorted list
