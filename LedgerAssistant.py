@@ -17,7 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 # TODO Update requirements.txt to no longer include tkintertable or tksheet.
 
-
 from tkinter import *
 from tkinter import ttk
 from config import *

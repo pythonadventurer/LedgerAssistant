@@ -20,6 +20,8 @@ from pathlib import Path
 from datetime import datetime
 from dateutil.parser import *
 
+# TODO Ability to save transactions
+
 # Rounding for normal people!
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
