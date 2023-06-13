@@ -28,7 +28,6 @@ from models import *
 import decimal
 from config import *
 from controller import *
-from tests import TestTransaction
 
 
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
@@ -93,7 +92,7 @@ class TransactionEntry(Frame):
             CurrentJournal.transactions.append(CurrentTransaction)
             CurrentJournal.export_hledger(varJournalFile)
           
-            ClearTrasactionEntry()
+            ClearTransactionEntry()
             ClearSplitEntry()
             ClearSplits()
             messagebox.showinfo("Ledger Assistant","Transaction has been posted.")
@@ -134,7 +133,7 @@ class TransactionEntry(Frame):
         def UpdateSplitTotal():
             varTotalAmount.set(decimal.Decimal(varSplitAmount.get())+decimal.Decimal(varTaxAmount.get()))
 
-        def ClearTrasactionEntry():
+        def ClearTransactionEntry():
             varDescription.set("")
             varDistAmount.set("0.00")
 
